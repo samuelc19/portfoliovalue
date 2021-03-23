@@ -5,8 +5,9 @@
 ## Sin cortos (no pesos negativos): 0
 ##############################################
 
-sortino <- function(clasif.sortino){
+sortino <- function(clasif.sortino, h){
     ret <- clasif.sortino
+    h <- h
     rf = rf
     n = n.act
     semiretornos <- pmin(ret,h)
