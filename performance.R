@@ -1,26 +1,27 @@
 
 ###############################################
-## Evaluación de desempeño
-
-performance <- function(ret.sharpe,ret.treynor,r.indice){
+## EvaluaciÃ³n de desempeÃ±o
+function(ret.sharpe,ret.treynor,r.sortino,r.indice){
   ret <-  ret.sharpe
   ret.treynor <- ret.treynor
   r.indice <- r.indice
+  r.sortino <- r.sortino
   precios.hist <- precios.hist
   t <- nrow(ret)
   
   wpmvg <- wpmvg
   wpt <-  wpt
   wpot <- wpot
+  wps <- wps
   
   names <- rownames(wpot)
   clasif.treynor <- cbind(ret.treynor[,names[1:length(wpot)]])
   
-  rport <- matrix(0,nrow=t,ncol=4)
-  colnames(rport) <- c("PMVG","Sharpe","Treynor","Benchmark")
+  rport <- matrix(0,nrow=t,ncol=5)
+  colnames(rport) <- c("PMVG","Sharpe","Treynor","Sortino","Benchmark")
   
-  vport <- matrix(0,nrow=t,ncol=4)
-  colnames(vport) <- c("PMVG","Sharpe","Treynor","Benchmark")
+  vport <- matrix(0,nrow=t,ncol=5)
+  colnames(vport) <- c("PMVG","Sharpe","Treynor","Sortino","Benchmark")
   
   # Retornos
   # PMVG
@@ -30,12 +31,15 @@ performance <- function(ret.sharpe,ret.treynor,r.indice){
   rpsharpe <- ret%*%wpt
   rport[,2] <- rpsharpe 
   # Treynor
-  rptreynor <- clasif.treynor%*%wpot
+  rptreynor <- ret.treynor%*%wpot
   rport[,3] <- rptreynor
+  #Sortino
+  rpsortino <- r.sortino%*%wps
+  rport[,4] <- rpsortino
   # Benchmark
-  rport[,4] <- r.indice
+  rport[,5] <- r.indice
   
-  # Indexación
+  # Indexaciï¿½n
   #rport <- cbind(rport,retornos[,1]) 
   #rport <- rport[,1:4]
   
@@ -61,13 +65,20 @@ performance <- function(ret.sharpe,ret.treynor,r.indice){
     port.treynor[i] <- port.treynor[i-1]*exp(rptreynor[i-1])
   }
   vport[,3] <- port.treynor
+  # Sortino
+  port.sortino<- matrix(0, nrow=t)
+  port.sortino[1] <- valor
+  for(i in 2:t){
+    port.sortino[i] <- port.sortino[i-1]*exp(rpsortino[i-1])
+  }
+  vport[,4] <- port.sortino
   # Benchmark
   v.benchmark <- matrix(0, nrow=t)
   v.benchmark[1] <- valor
   for(i in 2:t){
     v.benchmark[i] <- v.benchmark[i-1]*exp(r.indice[i-1])
   }
-  vport[,4] <- v.benchmark
+  vport[,5] <- v.benchmark
   #vport <- cbind(vport,retornos[,1]) 
   #vport <- vport[,1:4]
   
