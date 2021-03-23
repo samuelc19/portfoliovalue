@@ -68,4 +68,3 @@ function(retornos,rindice){
     POT[[4]] <- n.optimo 
     return(POT)    
 }
-    
